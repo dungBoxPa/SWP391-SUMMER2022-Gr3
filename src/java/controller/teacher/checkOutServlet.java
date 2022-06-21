@@ -13,8 +13,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
 import java.util.ArrayList;
+
 import java.util.List;
+
 import model.Account;
 import model.Attendence;
 import model.Kinder_Class;
@@ -102,27 +105,29 @@ public class checkOutServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         HttpSession session = request.getSession(true);
         Kinder_Class kinder_class = (Kinder_Class) session.getAttribute("kinder_class");
         Account teacher = (Account) session.getAttribute("teacher");
         List<Attendence> checkoutkids = new ArrayList<>();
         AttendanceDAO attDAO = new AttendanceDAO();
-        List<Kindergartner> list = attDAO.getAllCheckInKids(kinder_class.getClass_id());
         String date = java.time.LocalDate.now().toString();
-        for (Kindergartner kindergartner : list) {
-            String check = request.getParameter("checkAttendence" + kindergartner.getKinder_id());
-            Attendence attendance = null;
-            if (check.equalsIgnoreCase("1")) {
-                attendance = new Attendence(kindergartner.getKinder_id(), date, 2, teacher.getAccount_id());
-            } else if (check.equalsIgnoreCase("0")) {
-                attendance = new Attendence(kindergartner.getKinder_id(), date, 1, teacher.getAccount_id());
+        List<Kindergartner> list = attDAO.getAllCheckInKidsOfADay(kinder_class.getClass_id(), date);
+        try ( PrintWriter out = response.getWriter()) {
+            for (Kindergartner kindergartner : list) {
+                int check = Integer.parseInt(request.getParameter("checkAttendence" + kindergartner.getKinder_id()));
+                Attendence attendance = null;
+                if (check == 1) {
+                    attendance = new Attendence(kindergartner.getKinder_id(), date, 2, teacher.getAccount_id());
+                } else if (check == 0) {
+                    attendance = new Attendence(kindergartner.getKinder_id(), date, 1, teacher.getAccount_id());
+                }
+                checkoutkids.add(attendance);
+                attDAO.updateAttendanceInfor(attendance);
             }
-            checkoutkids.add(attendance);
-            attDAO.updateAttendanceInfor(attendance);
+            session.setAttribute("checkoutkids", checkoutkids);
+            response.sendRedirect("checkout");
         }
-        session.setAttribute("checkoutkids", checkoutkids);
-        response.sendRedirect("checkout");
     }
 
     /**

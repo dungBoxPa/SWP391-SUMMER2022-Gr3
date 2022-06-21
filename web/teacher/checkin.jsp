@@ -66,7 +66,10 @@
                             </div>
                             <div class="header-filter">
                                 <div class="date-input">
-                                    <input id="dateinput" type="date" name="todayDate" value="${requestScope.date}"/>
+                                    <form id="myform" action="checkattendance" method="POST">
+                                        <input id="dateinput" type="date" name="todayDate" value="${requestScope.date}"/>
+                                        <input type = "submit" value="Submit" onclick="onSubmitClick()" hidden/>
+                                    </form>
                                 </div>
                                 <div class="left-modes">
                                     <div class="check-section">
@@ -90,57 +93,30 @@
                             </div>
                         </div>
                         <div class="body-container">
-                            <c:if test="${sessionScope.present_kids == null}">
-                                <form action="attendance" method="POST">
-                                    <input type="hidden" id="checkDate1" name="attendanceDate1" value=""/>
-                                    <div class="list-students-ver2">
-                                        <%
-                                        int count = 0;
-                                        %>
-                                        <c:forEach var="s" items="${requestScope.listStudent}">
-                                            <input type="hidden" name="action" value="check_in"/>
-                                            <div class="student-infor">
-                                                <%
-                                                    count++;
-                                                %>
-                                                <p><%=count%></p>
-                                                <div class="img-section">
-                                                    <img src="teacher/img/userImg/download.png" alt="">
-                                                </div>
-                                                <a href="kidprofile?kid_id=${s.kinder_id}">${s.first_name} ${s.last_name}</a>
+                            <form action="attendance" method="POST">
+                                <div class="list-students-ver2">
+                                    <%
+                                    int count = 0;
+                                    %>
+                                    <c:forEach var="s" items="${requestScope.listStudent}">
+                                        <input type="hidden" name="action" value="check_in"/>
+                                        <div class="student-infor">
+                                            <%
+                                                count++;
+                                            %>
+                                            <p><%=count%></p>
+                                            <div class="img-section">
+                                                <img src="teacher/img/userImg/download.png" alt="">
+                                            </div>
+                                            <a href="kidprofile?kid_id=${s.kinder_id}">${s.first_name} ${s.last_name}</a>
+                                            <c:if test="${sessionScope.present_kids == null}">
                                                 <div class="check-attendance">
                                                     <input type="radio" name="checkAttendence${s.kinder_id}" value="1"  placeholder="Attend"> Attend
                                                     <input type="radio" name="checkAttendence${s.kinder_id}" value="0" checked placeholder="Absent"> Absent
                                                 </div>
-                                            </div>
-                                        </c:forEach>
-                                        <div class="submit-btn">
-                                            <input type="submit" name="Save" value="Save"/>
-                                        </div>
-                                        <div class="message">
-                                            <h3 style="color: red;">${requestScope.message}</h3>
-                                        </div>
-                                    </div>
-                                </form>
-                            </c:if>
-                            <c:if test="${sessionScope.present_kids != null}">
-                                <form action="attendance" method="POST">
-                                    <input type="hidden" id="checkDate2" name="attendanceDate2" value=""/>
-                                    <div class="list-students-ver2">
-                                        <%
-                                        int count = 0;
-                                        %>
-                                        <c:forEach var="s" items="${requestScope.listStudent}">
-                                            <input type="hidden" name="action" value="check_in"/>
-                                            <div class="student-infor">
-                                                <%
-                                                    count++;
-                                                %>
-                                                <p><%=count%></p>
-                                                <div class="img-section">
-                                                    <img src="teacher/img/userImg/download.png" alt="">
-                                                </div>
-                                                <a href="kidprofile?kid_id=${s.kinder_id}">${s.first_name} ${s.last_name}</a>
+                                            </c:if>
+
+                                            <c:if test="${sessionScope.present_kids != null}">
                                                 <c:forEach var="ps" items="${sessionScope.present_kids}">
                                                     <c:if test="${s.kinder_id == ps.student_id}">
                                                         <div class="check-attendance">
@@ -152,15 +128,17 @@
                                                         </div>
                                                     </c:if>
                                                 </c:forEach>
-                                            </div>
-                                        </c:forEach>
-
-                                        <div class="submit-btn">
-                                            <input type="submit" name="Save" value="Save"/>
+                                            </c:if>
                                         </div>
+                                    </c:forEach>
+                                    <div class="submit-btn">
+                                        <input type="submit" name="Save" value="Save"/>
                                     </div>
-                                </form>
-                            </c:if>
+                                    <div class="message">
+                                        <h3 style="color: red;">${requestScope.message}</h3>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -171,9 +149,7 @@
         showNotification();
         setTimeout(hideNotification, 8000);
         document.getElementById('dateinput').onchange = function () {
-            var input1 = document.getElementById('dateinput').value;
-            document.getElementById('checkDate1').value = input1;
-            console.log(input1);
+            document.getElementById("myform").submit();
         };
 
 

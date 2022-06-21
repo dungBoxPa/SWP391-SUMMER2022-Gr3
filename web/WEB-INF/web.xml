@@ -32,6 +32,10 @@
         <servlet-name>checkOutServlet</servlet-name>
         <servlet-class>controller.teacher.checkOutServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CheckAttendacePastServlet</servlet-name>
+        <servlet-class>controller.teacher.CheckAttendacePastServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -63,6 +67,10 @@
     <servlet-mapping>
         <servlet-name>checkOutServlet</servlet-name>
         <url-pattern>/checkout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CheckAttendacePastServlet</servlet-name>
+        <url-pattern>/checkattendance</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

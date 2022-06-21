@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller.teacher;
 
 import dal.AttendanceDAO;
@@ -76,12 +72,12 @@ public class attendanceServlet extends HttpServlet {
                 int classID = kc.getClass_id();
                 out.println(classID);
                 List<Kindergartner> listStu = stuDAO.getKidsByClass(classID);
+                request.setAttribute("listStudent", listStu);
                 if (message != null) {
                     request.setAttribute("message", message);
                 }
                 String date = java.time.LocalDate.now().toString();
                 request.setAttribute("date", date);
-                request.setAttribute("listStudent", listStu);
                 request.getRequestDispatcher("teacher/checkin.jsp").forward(request, response);
             } else {
                 request.setAttribute("error", "Do you want to create an account?");
@@ -105,6 +101,7 @@ public class attendanceServlet extends HttpServlet {
         Kinder_Class kinder_class = (Kinder_Class) session.getAttribute("kinder_class");
         Account teacher = (Account) session.getAttribute("teacher");
         String action = request.getParameter("action");
+        
         try ( PrintWriter out = response.getWriter()) {
             StudentDAO studao = new StudentDAO();
             AttendanceDAO attdao = new AttendanceDAO();
@@ -120,7 +117,7 @@ public class attendanceServlet extends HttpServlet {
                     } else if (check == 0) {
                         attendance = new Attendence(list.get(i).getKinder_id(), date, 0, teacher.getAccount_id());
                     }
-                    if (attdao.checkAttendance(attendance) != null) {
+                    if (attdao.checkAttendance(attendance) != null ) {
                         attdao.updateAttendanceInfor(attendance);
                     } else {
                         attdao.insertAttendanceInfor(attendance);
@@ -131,7 +128,6 @@ public class attendanceServlet extends HttpServlet {
             session.setAttribute("present_kids", present_kids);
             response.sendRedirect("attendance");
         }
-
     }
 
     /**

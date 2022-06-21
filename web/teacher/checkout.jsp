@@ -8,7 +8,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
-
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -60,7 +59,10 @@
                             </div>
                             <div class="header-filter">
                                 <div class="date-input">
-                                    <input id="week-input" type="date" name="todayDate" value="${requestScope.date}"/>
+                                    <form id="myform" action="checkattendance" method="POST">
+                                        <input id="dateinput" type="date" name="todayDate" value="${requestScope.date}"/>
+                                        <input type = "submit" value="Submit" onclick="onSubmitClick()" hidden/>
+                                    </form>
                                 </div>
                                 <div class="left-modes">
                                     <div class="check-section">
@@ -84,55 +86,28 @@
                             </div>
                         </div>
                         <div class="body-container">
-                            <c:if test="${sessionScope.checkoutkids == null}">
-                                <form action="checkout" method="POST">
-                                    <div class="list-students-ver2">
-                                        <%
-                                        int count = 0;
-                                        %>
-                                        <c:forEach var="s" items="${requestScope.liststu}">
-                                            <input type="hidden" name="action" value="check_in"/>
-                                            <div class="student-infor">
-                                                <%
-                                                    count++;
-                                                %>
-                                                <p><%= count%></p>
-                                                <div class="img-section">
-                                                    <img src="teacher/img/userImg/download.png" alt="">
-                                                </div>
-                                                <a href="kidprofile?kid_id=${s.kinder_id}">${s.first_name} ${s.last_name}</a>
-                                                <c:if test="${sessionScope.checkoutkids == null}">
-                                                    <div class="check-attendance">
-                                                        <input type="radio" name="checkAttendence${s.kinder_id}" value="1"  placeholder="Attend"> Attend
-                                                        <input type="radio" name="checkAttendence${s.kinder_id}" value="0" checked placeholder="Absent"> Absent
-                                                    </div>
-                                                </c:if>
+                            <form action="checkout" method="POST">
+                                <div class="list-students-ver2">
+                                    <%
+                                    int count = 0;
+                                    %>
+                                    <c:forEach var="s" items="${requestScope.liststu}">
+                                        <div class="student-infor">
+                                            <%
+                                                count++;
+                                            %>
+                                            <p><%= count%></p>
+                                            <div class="img-section">
+                                                <img src="teacher/img/userImg/download.png" alt="">
                                             </div>
-                                        </c:forEach>
-                                        <div class="submit-btn">
-                                            <input type="submit" name="Save" value="Save"/>
-                                        </div>
-                                    </div>
-                                </form>
-                            </c:if>
-
-                            <c:if test="${sessionScope.checkoutkids !=null}">
-                                <form action="checkout" method="POST">
-                                    <div class="list-students-ver2">
-                                        <%
-                                        int count = 0;
-                                        %>
-                                        <c:forEach var="s" items="${requestScope.liststu}">
-                                            <input type="hidden" name="action" value="check_in"/>
-                                            <div class="student-infor">
-                                                <%
-                                                    count++;
-                                                %>
-                                                <p><%= count%></p>
-                                                <div class="img-section">
-                                                    <img src="teacher/img/userImg/download.png" alt="">
+                                            <a href="kidprofile?kid_id=${s.kinder_id}">${s.first_name} ${s.last_name}</a>
+                                            <c:if test="${sessionScope.checkoutkids == null}">
+                                                <div class="check-attendance">
+                                                    <input type="radio" name="checkAttendence${s.kinder_id}" value="1"  placeholder="Attend"> Attend
+                                                    <input type="radio" name="checkAttendence${s.kinder_id}" value="0" checked placeholder="Absent"> Absent
                                                 </div>
-                                                <a href="kidprofile?kid_id=${s.kinder_id}">${s.first_name} ${s.last_name}</a>
+                                            </c:if>
+                                            <c:if test="${sessionScope.checkoutkids != null}">
                                                 <c:forEach var="ps" items="${sessionScope.checkoutkids}">
                                                     <c:if test="${s.kinder_id == ps.student_id}">
                                                         <div class="check-attendance">
@@ -144,19 +119,18 @@
                                                         </div>
                                                     </c:if>
                                                 </c:forEach>
-                                            </div>
-                                        </c:forEach>
-                                        <div class="submit-btn">
-                                            <input type="submit" name="Save" value="Save"/>
+                                            </c:if>
                                         </div>
+                                    </c:forEach>
+                                    <div class="submit-btn">
+                                        <input type="submit" name="Save" value="Save"/>
                                     </div>
-                                </form>
-                            </c:if>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </body>
-
 </html>

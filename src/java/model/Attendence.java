@@ -8,7 +8,7 @@ public class Attendence {
 
     private int student_id;
     private String check_date;
-    private int status = 0;
+    private int status;
     private int teacher_id;
 
     public Attendence() {
