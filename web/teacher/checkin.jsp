@@ -22,6 +22,8 @@
             .current1>a{
                 color: #fff;
             }
+
+
         </style>
     </head>
 
@@ -81,11 +83,11 @@
                                         </div>
                                     </div>
                                     <div class="student-filter">
-                                        <div class="filter-item">
-                                            <a href="attendance?action=all">All</a>
+                                        <div class="filter-item ${!requestScope.filter.equals("absent")?"current1":""}">
+                                            <a href="filter?action=getall" style="color: ${!requestScope.filter.equals("absent")?"#fff":""};">All</a>
                                         </div>
-                                        <div class="filter-item">
-                                            <a href="attendance?action=absent">Absent only</a>
+                                        <div class="filter-item ${requestScope.filter.equals("absent")?"current1":""}">
+                                            <a href="filter?action=absent" style="color: ${requestScope.filter.equals("absent")?"#fff":""};">Absent only</a>
                                         </div>
                                     </div>
                                 </div>
@@ -93,12 +95,24 @@
                             </div>
                         </div>
                         <div class="body-container">
+                            <c:if test="${requestScope.listKinder == null}">
+                                <c:set var="listStudent" value="${requestScope.listStudent}"/>
+                                <c:set var="toDayPresentKids" value="${sessionScope.present_kids}"/>
+                                <c:set var="isToday" value="false"/>
+                                <c:set var="attendances" value="${requestScope.attendances}"/>
+                            </c:if>
+                            <c:if test="${requestScope.listKinder != null}">
+                                <c:set var="listStudent" value="${requestScope.listKinder}"/>
+                                <c:set var="presentKids" value="${requestScope.listAtt}"/>
+                                <c:set var="isToday" value="true"/>
+                            </c:if>
+
                             <form action="attendance" method="POST">
                                 <div class="list-students-ver2">
                                     <%
                                     int count = 0;
                                     %>
-                                    <c:forEach var="s" items="${requestScope.listStudent}">
+                                    <c:forEach var="s" items="${listStudent}">
                                         <input type="hidden" name="action" value="check_in"/>
                                         <div class="student-infor">
                                             <%
@@ -109,22 +123,44 @@
                                                 <img src="teacher/img/userImg/download.png" alt="">
                                             </div>
                                             <a href="kidprofile?kid_id=${s.kinder_id}">${s.first_name} ${s.last_name}</a>
-                                            <c:if test="${sessionScope.present_kids == null}">
-                                                <div class="check-attendance">
-                                                    <input type="radio" name="checkAttendence${s.kinder_id}" value="1"  placeholder="Attend"> Attend
-                                                    <input type="radio" name="checkAttendence${s.kinder_id}" value="0" checked placeholder="Absent"> Absent
-                                                </div>
+
+                                            <c:if test="${presentKids == null}">
+                                                <c:forEach var="att" items="${attendances}">
+                                                    <c:if test="${att.student_id == s.kinder_id}">
+                                                        <div class="check-attendance">
+                                                            <input type="radio" name="checkAttendence${s.kinder_id}" value="1" 
+                                                                   ${att.status!=0?"checked":""} placeholder="Attend"> Attend
+                                                            <input type="radio" name="checkAttendence${s.kinder_id}" value="0" 
+                                                                   ${att.status==0?"checked":""} placeholder="Absent"> Absent
+                                                        </div>
+                                                    </c:if>
+                                                </c:forEach>
+
                                             </c:if>
 
-                                            <c:if test="${sessionScope.present_kids != null}">
-                                                <c:forEach var="ps" items="${sessionScope.present_kids}">
+                                            <c:if test="${toDayPresentKids != null}">
+                                                <c:forEach var="ps" items="${toDayPresentKids}">
                                                     <c:if test="${s.kinder_id == ps.student_id}">
                                                         <div class="check-attendance">
                                                             <c:set value="${ps.status}" var="status"/>
                                                             <input type="radio" name="checkAttendence${s.kinder_id}" value="1" 
-                                                                   ${status==1?"checked":""}/> Attend
+                                                                   ${status!=0?"checked":""}/> Attend
                                                             <input type="radio" name="checkAttendence${s.kinder_id}" value="0" 
                                                                    ${status==0?"checked":""}/> Absent
+                                                        </div>
+                                                    </c:if>
+                                                </c:forEach>
+                                            </c:if>
+
+                                            <c:if test="${presentKids != null}">
+                                                <c:forEach var="ps" items="${presentKids}">
+                                                    <c:if test="${s.kinder_id == ps.student_id}">
+                                                        <div class="check-attendance">
+                                                            <c:set value="${ps.status}" var="status"/>
+                                                            <input type="radio" name="checkAttendence${s.kinder_id}" value="1" 
+                                                                   ${status!=0?"checked":""} disabled="${isToday.equals("false")?"true":"false"}"/> Attend
+                                                            <input type="radio" name="checkAttendence${s.kinder_id}" value="0" 
+                                                                   ${status==0?"checked":""} disabled="${isToday.equals("false")?"true":"false"}"/> Absent
                                                         </div>
                                                     </c:if>
                                                 </c:forEach>
@@ -134,12 +170,22 @@
                                     <div class="submit-btn">
                                         <input type="submit" name="Save" value="Save"/>
                                     </div>
+
+                                </div>
+                            </form>
+                        </div>
+                        <c:if test="${requestScope.message !=null}">
+                            <div class="popup" id="xspopup">
+                                <div class="popup-content">
+                                    <div class="close" id="close-btn">
+                                        <i class="fa-solid fa-xmark" onclick="closeBox()"></i>
+                                    </div>
                                     <div class="message">
                                         <h3 style="color: red;">${requestScope.message}</h3>
                                     </div>
                                 </div>
-                            </form>
-                        </div>
+                            </div>
+                        </c:if>
                     </div>
                 </div>
             </div>
@@ -152,6 +198,9 @@
             document.getElementById("myform").submit();
         };
 
+        document.getElementById('close-btn').onclick = function () {
+            document.getElementById('xspopup').style.display = "none";
+        };
 
         function showNotification() {
 

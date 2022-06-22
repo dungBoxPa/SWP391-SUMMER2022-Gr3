@@ -13,11 +13,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
 import java.util.ArrayList;
-
 import java.util.List;
-
+import java.util.stream.Collectors;
 import model.Account;
 import model.Attendence;
 import model.Kinder_Class;
@@ -27,7 +25,7 @@ import model.Kindergartner;
  *
  * @author Windows 10 TIMT
  */
-public class checkOutServlet extends HttpServlet {
+public class FilterStudentServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -46,10 +44,10 @@ public class checkOutServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet checkOutServlet</title>");
+            out.println("<title>Servlet FilterStudentServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet checkOutServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet FilterStudentServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -68,30 +66,24 @@ public class checkOutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(true);
+        String action = request.getParameter("action");
         Account acc = (Account) session.getAttribute("account");
-        String checkDay = java.time.LocalDate.now().toString();
-        List<Attendence> attendance = new AttendanceDAO().getAllAttendanceOfInputDay(checkDay);
-        if (acc != null) {
-            StudentDAO studao = new StudentDAO();
-            List<Kindergartner> list = new ArrayList<>();
-            for (Attendence a : attendance) {
-                if (a.getStatus() != 0) {
-                    Kindergartner k = studao.getKidInfoById(a.getStudent_id());
-                    list.add(k);
-                }
-            }
-            if (!list.isEmpty()) {
-                request.setAttribute("liststu", list);
-                request.getRequestDispatcher("teacher/checkout.jsp").forward(request, response);
-            } else {
-                request.setAttribute("message", "Your attendance record has not been saved. Please save it!");
-                request.getRequestDispatcher("attendance").forward(request, response);
-            }
-        } else {
-            request.setAttribute("error", "Do you want to create an account?");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        }
+        Kinder_Class kc = (Kinder_Class) session.getAttribute("kinder_class");
+        if (action.equalsIgnoreCase("getall")) {
+            response.sendRedirect("attendance");
+        } else if (action.equalsIgnoreCase("absent")) {
+            List<Attendence> listAbsent = new AttendanceDAO().getAllAbsentStudent();
+            List<Kindergartner> listStu = listAbsent.stream()
+                    .map(x -> new StudentDAO().getKidInfoById(x.getStudent_id()))
+                    .collect(Collectors.toList());
+            request.setAttribute("filter", "absent");
+            request.setAttribute("listStudent", listStu);
+            request.setAttribute("date", java.time.LocalDate.now().toString());
+            request.getRequestDispatcher("teacher/checkin.jsp").forward(request, response);
 
+        } else {
+
+        }
     }
 
     /**
@@ -105,29 +97,7 @@ public class checkOutServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        HttpSession session = request.getSession(true);
-        Kinder_Class kinder_class = (Kinder_Class) session.getAttribute("kinder_class");
-        Account teacher = (Account) session.getAttribute("teacher");
-        List<Attendence> checkoutkids = new ArrayList<>();
-        AttendanceDAO attDAO = new AttendanceDAO();
-        String date = java.time.LocalDate.now().toString();
-        List<Kindergartner> list = attDAO.getAllCheckInKidsOfADay(kinder_class.getClass_id(), date);
-        try ( PrintWriter out = response.getWriter()) {
-            for (Kindergartner kindergartner : list) {
-                int check = Integer.parseInt(request.getParameter("checkAttendence" + kindergartner.getKinder_id()));
-                Attendence attendance = null;
-                if (check == 1) {
-                    attendance = new Attendence(kindergartner.getKinder_id(), date, 2, teacher.getAccount_id());
-                } else if (check == 0) {
-                    attendance = new Attendence(kindergartner.getKinder_id(), date, 1, teacher.getAccount_id());
-                }
-                checkoutkids.add(attendance);
-                attDAO.updateAttendanceInfor(attendance);
-            }
-            session.setAttribute("checkoutkids", checkoutkids);
-            response.sendRedirect("checkout");
-        }
+        processRequest(request, response);
     }
 
     /**

@@ -12,8 +12,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
+import model.Account;
 import model.Attendence;
+import model.Kinder_Class;
+import model.Kindergartner;
 
 /**
  *
@@ -73,14 +78,29 @@ public class CheckAttendacePastServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(true);
+        Account acc = (Account) session.getAttribute("account");
+        Kinder_Class kc = (Kinder_Class) session.getAttribute("kinder_class");
         try ( PrintWriter out = response.getWriter()) {
             String date1 = request.getParameter("todayDate");
-            StudentDAO studao = new StudentDAO();
-            AttendanceDAO attdao = new AttendanceDAO();
-            List<Attendence> listAtt = attdao.getAllAttendanceOfInputDay(date1);
-            for (Attendence attendence : listAtt) {
-                out.println(attendence.toString());
+            String today = java.time.LocalDate.now().toString();
+            if (date1.equals(today)) {
+                response.sendRedirect("attendance");
+            } else {
+                StudentDAO studao = new StudentDAO();
+                AttendanceDAO attdao = new AttendanceDAO();
+                List<Attendence> listAtt = attdao.getAllAttendanceOfInputDay(date1);
+                List<Kindergartner> listKinder = new ArrayList<>();
+                for (Attendence attendence : listAtt) {
+                    Kindergartner e = studao.getKidInfoById(attendence.getStudent_id());
+                    listKinder.add(e);
+                }
+                request.setAttribute("listAtt", listAtt);
+                request.setAttribute("date", date1);
+                request.setAttribute("listKinder", listKinder);
+                request.getRequestDispatcher("teacher/checkin.jsp").forward(request, response);
             }
+
         }
 
     }

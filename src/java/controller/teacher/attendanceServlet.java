@@ -63,22 +63,34 @@ public class attendanceServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(true);
+        StudentDAO stuDAO = new StudentDAO();
+        AttendanceDAO attdao = new AttendanceDAO();
         Account acc = (Account) session.getAttribute("account");
         Kinder_Class kc = (Kinder_Class) session.getAttribute("kinder_class");
         String message = request.getParameter("message");
         try ( PrintWriter out = response.getWriter()) {
             if (acc != null) {
-                StudentDAO stuDAO = new StudentDAO();
-                int classID = kc.getClass_id();
-                out.println(classID);
-                List<Kindergartner> listStu = stuDAO.getKidsByClass(classID);
-                request.setAttribute("listStudent", listStu);
+                List<Kindergartner> listStu = new ArrayList<>();
+                String date = java.time.LocalDate.now().toString();
+                List<Attendence> attendances = attdao.getAllAttendanceOfInputDay(date);
+                if (!attendances.isEmpty()) {
+                    for (Attendence attendance : attendances) {
+                        listStu.add(stuDAO.getKidInfoById(attendance.getStudent_id()));
+                    }
+                    request.setAttribute("attendances", attendances);
+                } else {
+                    int classID = kc.getClass_id();
+                    out.println(classID);
+                    listStu = stuDAO.getKidsByClass(classID);
+                }
                 if (message != null) {
                     request.setAttribute("message", message);
+
                 }
-                String date = java.time.LocalDate.now().toString();
+                request.setAttribute("listStudent", listStu);
                 request.setAttribute("date", date);
                 request.getRequestDispatcher("teacher/checkin.jsp").forward(request, response);
+
             } else {
                 request.setAttribute("error", "Do you want to create an account?");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
@@ -101,7 +113,6 @@ public class attendanceServlet extends HttpServlet {
         Kinder_Class kinder_class = (Kinder_Class) session.getAttribute("kinder_class");
         Account teacher = (Account) session.getAttribute("teacher");
         String action = request.getParameter("action");
-        
         try ( PrintWriter out = response.getWriter()) {
             StudentDAO studao = new StudentDAO();
             AttendanceDAO attdao = new AttendanceDAO();
@@ -117,7 +128,7 @@ public class attendanceServlet extends HttpServlet {
                     } else if (check == 0) {
                         attendance = new Attendence(list.get(i).getKinder_id(), date, 0, teacher.getAccount_id());
                     }
-                    if (attdao.checkAttendance(attendance) != null ) {
+                    if (attdao.checkAttendance(attendance) != null) {
                         attdao.updateAttendanceInfor(attendance);
                     } else {
                         attdao.insertAttendanceInfor(attendance);

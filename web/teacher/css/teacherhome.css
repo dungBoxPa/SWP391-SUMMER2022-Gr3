@@ -6,6 +6,7 @@
 }
 
 .wrapper {
+    max-width: 1361px;
     background-color: #E9E9E9;
 }
 
@@ -397,7 +398,39 @@ form{
     border-left: 6px solid #4CAF50;
     width: 400px;
     padding: 4px 12px;
-    border-radius: 20px;
+    border-radius: 10px;
 }
+
+.popup{
+    position: fixed;
+    top: 175px;
+    z-index: 1;
+    right: -400px;
+    left: auto;
+    animation: slide 0.5s forwards;
+    /*animation: fadeout 5s;*/
+    animation-delay: 2s;
+}
+
+.popup-content{
+    position: relative;
+}
+
+.close{
+    position: absolute;
+    right: 0;
+    padding-right: 5px;
+    padding-top: 5px;
+}
+
+@keyframes slide {
+    100% { right: 0; }
+}
+
+@keyframes fadeout {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 
 

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import model.Attendence;
 import model.Kindergartner;
 
@@ -100,6 +101,13 @@ public class AttendanceDAO {
         return null;
     }
 
+    public List<Attendence> getAllAbsentStudent() {
+        String checkday = java.time.LocalDate.now().toString();
+        List<Attendence> listAtt = new AttendanceDAO().getAllAttendanceOfInputDay(checkday);
+        List<Attendence> outputs = listAtt.stream().filter(x -> x.getStatus() == 0).collect(Collectors.toList());
+        return outputs;
+    }
+
     public List<Attendence> getAllAttendanceOfInputDay(String checkDay) {
         String sql = "select * from attendance where check_date = ?";
         List<Attendence> list = new ArrayList<>();
@@ -120,16 +128,23 @@ public class AttendanceDAO {
 
     public static void main(String[] args) {
         AttendanceDAO att = new AttendanceDAO();
-        List<Kindergartner> list = att.getAllCheckInKidsOfADay(1, "2022/06/20");
-        for (Kindergartner a : list) {
-            System.out.println(a.toString());
+//        List<Kindergartner> list = att.getAllCheckInKidsOfADay(1, "2022/06/20");
+//        for (Kindergartner a : list) {
+//            System.out.println(a.toString());
+//        }
+//        List<Attendence> lista = att.getAllAttendanceOfInputDay("2022/06/20");
+//        for (Attendence attendence : lista) {
+//            System.out.println(attendence.toString());
+//        }
+//        String date = java.time.LocalDate.now().toString();
+//        Attendence a = att.checkAttendance(new Attendence(1, date, 0, 1));
+//        System.out.println(a);
+        List<Attendence> listAbsent = new AttendanceDAO().getAllAbsentStudent();
+        List<Kindergartner> listStu = listAbsent.stream()
+                .map(x -> new StudentDAO().getKidInfoById(x.getStudent_id()))
+                .collect(Collectors.toList());
+        for (Kindergartner kindergartner : listStu) {
+            System.out.println(kindergartner.toString());
         }
-        List<Attendence> lista = att.getAllAttendanceOfInputDay("2022/06/20");
-        for (Attendence attendence : lista) {
-            System.out.println(attendence.toString());
-        }
-        String date = java.time.LocalDate.now().toString();
-        Attendence a = att.checkAttendance(new Attendence(1, date, 0, 1));
-        System.out.println(a);
     }
 }
