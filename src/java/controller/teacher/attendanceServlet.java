@@ -85,7 +85,6 @@ public class attendanceServlet extends HttpServlet {
                 }
                 if (message != null) {
                     request.setAttribute("message", message);
-
                 }
                 request.setAttribute("listStudent", listStu);
                 request.setAttribute("date", date);

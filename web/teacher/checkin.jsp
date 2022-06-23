@@ -70,6 +70,7 @@
                                 <div class="date-input">
                                     <form id="myform" action="checkattendance" method="POST">
                                         <input id="dateinput" type="date" name="todayDate" value="${requestScope.date}"/>
+                                        <input type="hidden" name="action" value="checkin"/>
                                         <input type = "submit" value="Submit" onclick="onSubmitClick()" hidden/>
                                     </form>
                                 </div>
@@ -84,10 +85,10 @@
                                     </div>
                                     <div class="student-filter">
                                         <div class="filter-item ${!requestScope.filter.equals("absent")?"current1":""}">
-                                            <a href="filter?action=getall" style="color: ${!requestScope.filter.equals("absent")?"#fff":""};">All</a>
+                                            <a href="filter?action=getall&method=checkin" style="color: ${!requestScope.filter.equals("absent")?"#fff":""};">All</a>
                                         </div>
                                         <div class="filter-item ${requestScope.filter.equals("absent")?"current1":""}">
-                                            <a href="filter?action=absent" style="color: ${requestScope.filter.equals("absent")?"#fff":""};">Absent only</a>
+                                            <a href="filter?action=absent&method=checkin" style="color: ${requestScope.filter.equals("absent")?"#fff":""};">Absent only</a>
                                         </div>
                                     </div>
                                 </div>

@@ -67,19 +67,35 @@ public class FilterStudentServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession(true);
         String action = request.getParameter("action");
+        String method = request.getParameter("method");
         Account acc = (Account) session.getAttribute("account");
         Kinder_Class kc = (Kinder_Class) session.getAttribute("kinder_class");
         if (action.equalsIgnoreCase("getall")) {
-            response.sendRedirect("attendance");
+            if (method.equals("checkin")) {
+                response.sendRedirect("attendance");
+            } else if (method.equals("checkout")) {
+                response.sendRedirect("checkout");
+            }
         } else if (action.equalsIgnoreCase("absent")) {
-            List<Attendence> listAbsent = new AttendanceDAO().getAllAbsentStudent();
-            List<Kindergartner> listStu = listAbsent.stream()
-                    .map(x -> new StudentDAO().getKidInfoById(x.getStudent_id()))
-                    .collect(Collectors.toList());
+            List<Attendence> listAbsent = new ArrayList<>();
+            List<Kindergartner> listStu = new ArrayList<>();
             request.setAttribute("filter", "absent");
-            request.setAttribute("listStudent", listStu);
             request.setAttribute("date", java.time.LocalDate.now().toString());
-            request.getRequestDispatcher("teacher/checkin.jsp").forward(request, response);
+            if (method.equals("checkin")) {
+                listAbsent = new AttendanceDAO().getAllStatusStudent(0);
+                listStu = listAbsent.stream()
+                        .map(x -> new StudentDAO().getKidInfoById(x.getStudent_id()))
+                        .collect(Collectors.toList());
+                request.setAttribute("listStudent", listStu);
+                request.getRequestDispatcher("teacher/checkin.jsp").forward(request, response);
+            } else if (method.equals("checkout")) {
+                listAbsent = new AttendanceDAO().getAllStatusStudent(1);
+                listStu = listAbsent.stream()
+                        .map(x -> new StudentDAO().getKidInfoById(x.getStudent_id()))
+                        .collect(Collectors.toList());
+                request.setAttribute("listStudent", listStu);
+                request.getRequestDispatcher("teacher/checkout.jsp").forward(request, response);
+            }
 
         } else {
 

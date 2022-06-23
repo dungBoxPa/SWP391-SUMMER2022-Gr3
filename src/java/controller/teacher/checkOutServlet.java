@@ -81,7 +81,8 @@ public class checkOutServlet extends HttpServlet {
                 }
             }
             if (!list.isEmpty()) {
-                request.setAttribute("liststu", list);
+                request.setAttribute("listStudent", list);
+                request.setAttribute("date", java.time.LocalDate.now().toString());
                 request.getRequestDispatcher("teacher/checkout.jsp").forward(request, response);
             } else {
                 request.setAttribute("message", "Your attendance record has not been saved. Please save it!");

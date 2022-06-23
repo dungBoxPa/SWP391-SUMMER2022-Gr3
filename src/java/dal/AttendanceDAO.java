@@ -100,11 +100,12 @@ public class AttendanceDAO {
         }
         return null;
     }
+   
 
-    public List<Attendence> getAllAbsentStudent() {
+    public List<Attendence> getAllStatusStudent(int status) {
         String checkday = java.time.LocalDate.now().toString();
         List<Attendence> listAtt = new AttendanceDAO().getAllAttendanceOfInputDay(checkday);
-        List<Attendence> outputs = listAtt.stream().filter(x -> x.getStatus() == 0).collect(Collectors.toList());
+        List<Attendence> outputs = listAtt.stream().filter(x -> x.getStatus() == status).collect(Collectors.toList());
         return outputs;
     }
 
@@ -139,7 +140,7 @@ public class AttendanceDAO {
 //        String date = java.time.LocalDate.now().toString();
 //        Attendence a = att.checkAttendance(new Attendence(1, date, 0, 1));
 //        System.out.println(a);
-        List<Attendence> listAbsent = new AttendanceDAO().getAllAbsentStudent();
+        List<Attendence> listAbsent = new AttendanceDAO().getAllStatusStudent(1);
         List<Kindergartner> listStu = listAbsent.stream()
                 .map(x -> new StudentDAO().getKidInfoById(x.getStudent_id()))
                 .collect(Collectors.toList());

@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import model.Account;
 import model.Attendence;
 import model.Kinder_Class;
@@ -80,25 +81,45 @@ public class CheckAttendacePastServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession(true);
         Account acc = (Account) session.getAttribute("account");
+        StudentDAO studao = new StudentDAO();
         Kinder_Class kc = (Kinder_Class) session.getAttribute("kinder_class");
+        String action = request.getParameter("action");
         try ( PrintWriter out = response.getWriter()) {
             String date1 = request.getParameter("todayDate");
             String today = java.time.LocalDate.now().toString();
-            if (date1.equals(today)) {
-                response.sendRedirect("attendance");
-            } else {
-                StudentDAO studao = new StudentDAO();
-                AttendanceDAO attdao = new AttendanceDAO();
-                List<Attendence> listAtt = attdao.getAllAttendanceOfInputDay(date1);
-                List<Kindergartner> listKinder = new ArrayList<>();
-                for (Attendence attendence : listAtt) {
-                    Kindergartner e = studao.getKidInfoById(attendence.getStudent_id());
-                    listKinder.add(e);
+            if (action.equals("checkout")) {
+                if (date1.equals(today)) {
+                    response.sendRedirect("checkout");
+                } else {
+                    AttendanceDAO attdao = new AttendanceDAO();
+                    List<Attendence> listAtt = attdao.getAllAttendanceOfInputDay(date1).stream()
+                            .filter(x -> x.getStatus() != 0)
+                            .collect(Collectors.toList());
+                    List<Kindergartner> listKinder = listAtt.stream()
+                            .map(x -> new StudentDAO()
+                            .getKidInfoById(x.getStudent_id()))
+                            .collect(Collectors.toList());
+                    request.setAttribute("listAtt", listAtt);
+                    request.setAttribute("date", date1);
+                    request.setAttribute("listKinder", listKinder);
+                    request.getRequestDispatcher("teacher/checkout.jsp").forward(request, response);
                 }
-                request.setAttribute("listAtt", listAtt);
-                request.setAttribute("date", date1);
-                request.setAttribute("listKinder", listKinder);
-                request.getRequestDispatcher("teacher/checkin.jsp").forward(request, response);
+            } else if (action.equals("checkin")) {
+                if (date1.equals(today)) {
+                    response.sendRedirect("attendance");
+                } else {
+                    AttendanceDAO attdao = new AttendanceDAO();
+                    List<Attendence> listAtt = attdao.getAllAttendanceOfInputDay(date1);
+                    List<Kindergartner> listKinder = new ArrayList<>();
+                    for (Attendence attendence : listAtt) {
+                        Kindergartner e = studao.getKidInfoById(attendence.getStudent_id());
+                        listKinder.add(e);
+                    }
+                    request.setAttribute("listAtt", listAtt);
+                    request.setAttribute("date", date1);
+                    request.setAttribute("listKinder", listKinder);
+                    request.getRequestDispatcher("teacher/checkin.jsp").forward(request, response);
+                }
             }
 
         }

@@ -61,6 +61,7 @@
                                 <div class="date-input">
                                     <form id="myform" action="checkattendance" method="POST">
                                         <input id="dateinput" type="date" name="todayDate" value="${requestScope.date}"/>
+                                        <input type="hidden" name="action" value="checkout"/>
                                         <input type = "submit" value="Submit" onclick="onSubmitClick()" hidden/>
                                     </form>
                                 </div>
@@ -70,15 +71,15 @@
                                             <a href="attendance">Check in</a>
                                         </div>
                                         <div class="check-out check-item current1">
-                                            <a href="#">Check out</a>
+                                            <a href="#" style="color: #fff;">Check out</a>
                                         </div>
                                     </div>
                                     <div class="student-filter">
-                                        <div class="filter-item">
-                                            <a href="">All</a>
+                                        <div class="filter-item ${!requestScope.filter.equals("absent")?"current1":""}">
+                                            <a href="filter?action=getall&method=checkout" style="color: ${!requestScope.filter.equals("absent")?"#fff":""};">All</a>
                                         </div>
-                                        <div class="filter-item">
-                                            <a href="#">Absent only</a>
+                                        <div class="filter-item ${requestScope.filter.equals("absent")?"current1":""}">
+                                            <a href="filter?action=absent&method=checkout" style="color: ${requestScope.filter.equals("absent")?"#fff":""};">Absent only</a>
                                         </div>
                                     </div>
                                 </div>
@@ -86,12 +87,24 @@
                             </div>
                         </div>
                         <div class="body-container">
+                            <c:if test="${requestScope.listKinder == null}">
+                                <c:set var="listStudent" value="${requestScope.listStudent}"/>
+                                <c:set var="toDayPresentKids" value="${sessionScope.present_kids}"/>
+                                <c:set var="toDayCheckoutKids" value="${sessionScope.checkoutkids}"/>
+                                <c:set var="isToday" value="false"/>
+                                <c:set var="attendances" value="${requestScope.attendances}"/>
+                            </c:if>
+                            <c:if test="${requestScope.listKinder != null}">
+                                <c:set var="listStudent" value="${requestScope.listKinder}"/>
+                                <c:set var="presentKids" value="${requestScope.listAtt}"/>
+                                <c:set var="isToday" value="true"/>
+                            </c:if>
                             <form action="checkout" method="POST">
                                 <div class="list-students-ver2">
                                     <%
                                     int count = 0;
                                     %>
-                                    <c:forEach var="s" items="${requestScope.liststu}">
+                                    <c:forEach var="s" items="${listStudent}">
                                         <div class="student-infor">
                                             <%
                                                 count++;
@@ -101,14 +114,22 @@
                                                 <img src="teacher/img/userImg/download.png" alt="">
                                             </div>
                                             <a href="kidprofile?kid_id=${s.kinder_id}">${s.first_name} ${s.last_name}</a>
-                                            <c:if test="${sessionScope.checkoutkids == null}">
-                                                <div class="check-attendance">
-                                                    <input type="radio" name="checkAttendence${s.kinder_id}" value="1"  placeholder="Attend"> Attend
-                                                    <input type="radio" name="checkAttendence${s.kinder_id}" value="0" checked placeholder="Absent"> Absent
-                                                </div>
+                                            <c:if test="${presentKids == null}">
+                                                <c:forEach var="att" items="${attendances}">
+                                                    <c:if test="${att.student_id == s.kinder_id}">
+                                                        <div class="check-attendance">
+                                                            <input type="radio" name="checkAttendence${s.kinder_id}" value="1" 
+                                                                   ${att.status==2?"checked":""} placeholder="Attend"> Attend
+                                                            <input type="radio" name="checkAttendence${s.kinder_id}" value="0" 
+                                                                   ${att.status==1?"checked":""} placeholder="Absent"> Absent
+                                                        </div>
+                                                    </c:if>
+                                                </c:forEach>
+
                                             </c:if>
-                                            <c:if test="${sessionScope.checkoutkids != null}">
-                                                <c:forEach var="ps" items="${sessionScope.checkoutkids}">
+
+                                            <c:if test="${toDayCheckoutKids == null}">
+                                                <c:forEach var="ps" items="${toDayPresentKids}">
                                                     <c:if test="${s.kinder_id == ps.student_id}">
                                                         <div class="check-attendance">
                                                             <c:set value="${ps.status}" var="status"/>
@@ -116,6 +137,33 @@
                                                                    ${status==2?"checked":""}/> Attend
                                                             <input type="radio" name="checkAttendence${s.kinder_id}" value="0" 
                                                                    ${status==1?"checked":""}/> Absent
+                                                        </div>
+                                                    </c:if>
+                                                </c:forEach>
+                                            </c:if>
+                                            <c:if test="${toDayCheckoutKids != null}">
+                                                <c:forEach var="ps" items="${toDayCheckoutKids}">
+                                                    <c:if test="${s.kinder_id == ps.student_id}">
+                                                        <div class="check-attendance">
+                                                            <c:set value="${ps.status}" var="status"/>
+                                                            <input type="radio" name="checkAttendence${s.kinder_id}" value="1" 
+                                                                   ${status==2?"checked":""}/> Attend
+                                                            <input type="radio" name="checkAttendence${s.kinder_id}" value="0" 
+                                                                   ${status==1?"checked":""}/> Absent
+                                                        </div>
+                                                    </c:if>
+                                                </c:forEach>
+                                            </c:if>
+
+                                            <c:if test="${presentKids != null}">
+                                                <c:forEach var="ps" items="${presentKids}">
+                                                    <c:if test="${s.kinder_id == ps.student_id}">
+                                                        <div class="check-attendance">
+                                                            <c:set value="${ps.status}" var="status"/>
+                                                            <input type="radio" name="checkAttendence${s.kinder_id}" value="1" 
+                                                                   ${status==2?"checked":""} disabled="${isToday.equals("false")?"true":"false"}"/> Attend
+                                                            <input type="radio" name="checkAttendence${s.kinder_id}" value="0" 
+                                                                   ${status==1?"checked":""} disabled="${isToday.equals("false")?"true":"false"}"/> Absent
                                                         </div>
                                                     </c:if>
                                                 </c:forEach>
@@ -133,4 +181,9 @@
             </div>
         </div>
     </body>
+    <script>
+        document.getElementById('dateinput').onchange = function () {
+            document.getElementById("myform").submit();
+        };
+    </script>
 </html>
