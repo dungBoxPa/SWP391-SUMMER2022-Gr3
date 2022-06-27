@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+/* div,
+label {
+    margin: 0;
+    padding: 0;
+} */
+
+
+/****** Style Star Rating Widget *****/
+
+.kid-profile {
+    position: relative;
+}
+
+.feedback-section-content {
+    height: 55px;
+    box-shadow: 3px 4px 4px 4px rgb(0 0 0 / 12%);
+    width: 220px;
+    border-radius: 20px;
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+form {
+    padding: 0;
+    margin: 0;
+    border: none;
+    display: block;
+}
+
+#rating {
+    border: none;
+    float: left;
+}
+
+.feedback-content {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.feedback-content textarea {
+    width: 400px;
+    height: 300px;
+    border-radius: 20px;
+    padding: 10px;
+    border: none;
+    box-shadow: 3px 4px 4px 4px rgb(0 0 0 / 12%);
+}
+
+.feedback-content textarea:focus-visible {
+    border: none;
+}
+
+.feedback-section {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+}
+
+.feedback-section input {
+    cursor: pointer;
+    margin-top: 10px;
+    width: 120px;
+    height: 50px;
+    background-color: #fff;
+    margin-left: 40px;
+    border-radius: 20px;
+    border: none;
+    box-shadow: 3px 4px 4px 4px rgb(0 0 0 / 12%);
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.feedback-section input:hover {
+    background-color: #889BFF;
+    color: #fff;
+}
+
+
+/*ẩn input radio - vì chúng ta đã có label là GUI*/
+
+#rating>input {
+    display: none;
+}
+
+#rating>label:before {
+    margin: 5px;
+    font-size: 1.25em;
+    font-family: FontAwesome;
+    display: inline-block;
+    content: "\f005";
+}
+
+
+/*1 ngôi sao*/
+
+#rating>.half:before {
+    content: "\f089";
+    position: absolute;
+}
+
+
+/*0.5 ngôi sao*/
+
+#rating>label {
+    color: #ddd;
+    float: right;
+}
+
+
+/*float:right để lật ngược các ngôi sao lại đúng theo thứ tự trong thực tế*/
+
+
+/*thêm màu cho sao đã chọn và các ngôi sao phía trước*/
+
+#rating>input:checked~label,
+#rating:not(:checked)>label:hover,
+#rating:not(:checked)>label:hover~label {
+    color: #FFD700;
+}
+
+
+/* Hover vào các sao phía trước ngôi sao đã chọn*/
+
+#rating>input:checked+label:hover,
+#rating>input:checked~label:hover,
+#rating>label:hover~input:checked~label,
+#rating>input:checked~label:hover~label {
+    color: #FFED85;
+}

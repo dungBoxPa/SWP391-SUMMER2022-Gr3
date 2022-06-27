@@ -1,0 +1,137 @@
+.kid-profile {
+    margin-top: 15px;
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.kid-profile .kid-profile_header {
+    display: flex;
+    justify-content: center;
+    padding-top: 30px;
+}
+
+.img-section {
+    padding-right: 30px;
+}
+
+.personel-section p,
+h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+}
+
+.personel-section p:not(:first-child) {
+    padding-top: 10px;
+    font-size: 20px;
+}
+
+.kid-profile .list-option {
+    width: 372px;
+    height: 55px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 25px auto;
+    border-radius: 20px;
+    line-height: 50px;
+    box-shadow: 3px 4px 4px 4px rgb(0 0 0 / 12%);
+}
+
+.option-item {
+    width: 30%;
+    height: 80%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.list-option .option-item:hover {
+    background-color: #889BFF;
+    border-radius: 20px;
+}
+
+.list-option .option-item:hover a {
+    color: #fff;
+}
+
+.list-option a {
+    text-align: center;
+    text-decoration: none;
+    color: #717171;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+}
+
+.kid-profile_content {
+    width: 85%;
+    height: auto;
+    margin: 0 auto;
+    padding-bottom: 10px;
+}
+
+.kid-profile_content .content-item {
+    width: 573px;
+    height: 55px;
+    display: flex;
+    box-shadow: 3px 4px 4px 4px rgb(0 0 0 / 12%);
+    display: flex;
+    align-items: center;
+    margin: 20px auto;
+    border-radius: 20px;
+}
+
+.content-item .item-title {
+    width: 150px;
+    height: 100%;
+    background-color: #889BFF;
+    border-radius: 20px 0 0 20px;
+    /* text-align: center; */
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.content-item p {
+    width: 100%;
+    height: 100%;
+    /* text-align: center; */
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 450;
+}
+
+.item-title strong {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+}
+
+.description>p {
+    padding: 10px 5px;
+}
+
+
+/* Activate */
+
+.current {
+    width: 30%;
+    height: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #889BFF;
+    /* color: #fff; */
+    border-radius: 20px;
+}
+
+.current>a {
+    color: #fff;
+}

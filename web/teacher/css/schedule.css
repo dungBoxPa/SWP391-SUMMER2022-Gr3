@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+
+.year-selection{
+    width: 155px;
+    height: 55px;
+    background-color: #fff;
+    border-radius: 2em;
+    text-align: center;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.date-selection{
+  width: 248px;
+  height: 55px;
+  background-color: #fff;
+  border-radius: 2em;
+  margin-left: 20px;
+}
+
+select {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  /* styling */
+  background-color: white;
+  display: inline-block;
+  font: inherit;
+  line-height: 55px;
+  padding-right: 1em;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  color: #717171;
+  font-size: 16px;
+  font-weight: 700;
+  position: relative;
+  padding-left: 40px;
+  /* reset */
+  margin: 0;      
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.year-selection i{
+    /* position: absolute; */
+    font-size: 30px;
+    line-height: 50px;
+    position: absolute;
+    left: 100px;
+    color: #889BFF;
+    /* background-color: #889BFF; */
+    /* color: #fff; */
+}
+
+select option{
+  padding: 1px;
+  /* border: none; */
+}
+
+.schedule-content{
+  height: auto;
+  margin-top: 40px;
+  overflow-y: scroll;
+  height: 445px;
+}
+
+.schedule-content table{
+  width: 100%;
+  position: relative;
+}
+
+.schedule-content table thead{
+  
+}
+
+.schedule-content table thead tr{
+  width: 98%;
+  margin: 0 auto;
+  padding-right: 30px;
+}
+
+.schedule-content table thead td{
+  padding-left: 60px;
+  background-color: #E9E9E9;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  height:30px;
+  color: #000;
+}
+
+.schedule-content table tr:not(:nth-child(4)){
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 5px;
+  text-align: center;
+}
+.schedule-content table tbody tr td:first-child{
+  position: relative;
+}
+
+.schedule-content table tbody tr:first-child:before{
+  content: "08:00";
+  font-family: 'Inter', sans-serif;
+
+}
+
+.schedule-content table tbody tr:nth-child(2):before{
+  content: "09:00";
+  font-family: 'Inter', sans-serif;
+
+}
+
+.schedule-content table tbody tr:nth-child(3):before{
+  content: "10:00";
+  font-family: 'Inter', sans-serif;
+
+}
+
+.schedule-content table tbody tr:nth-child(4):before{
+  content: "11:00";
+  font-family: 'Inter', sans-serif;
+
+}
+
+.schedule-content table tbody tr:nth-child(5):before{
+  content: "12:00";
+  font-family: 'Inter', sans-serif;
+
+}
+
+.schedule-content table tbody tr:nth-child(6):before{
+  content: "13:00";
+  font-family: 'Inter', sans-serif;
+
+}
+
+.schedule-content table tbody tr:nth-child(7):before{
+  content: "14:00";
+  font-family: 'Inter', sans-serif;
+}
+
+.schedule-content table tbody tr:nth-child(7)::after{
+  content: "15:00";
+  font-family: 'Inter', sans-serif;
+  position: absolute;
+  left: 5px;
+  bottom: 0;
+}
+
+
+
+/*.schedule-content table tbody tr td:first-child::before{
+  content: "09:00";
+  font-family: 'Inter', sans-serif;
+  position: absolute;
+  left: -48px;
+  bottom: 0;
+  color: #000;
+ } */
+
+
+.schedule-content table tr:nth-child(4){
+  display: flex;
+  margin: 5px auto;
+  width: 100%;
+}
+
+.schedule-content table tr:nth-child(4) td{
+  background-color: #C1C1C1;
+  margin-left: 5px;
+  color: #fff;
+  text-align: center;
+  line-height: 86px;
+  /* margin-left: 30px; */
+}
+
+.schedule-content table tr:nth-child(4)::before{
+  content: none;
+}
+
+.schedule-content table thead tr::before,
+.schedule-content table thead tr::after{
+  content: none;
+}
+
+
+.schedule-content table td{
+  width: 169px;
+  height: 86px;
+  background-color: #fff;
+  border-radius: 10px;
+  line-height: 35px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #889BFF;
+}
+
+
+
